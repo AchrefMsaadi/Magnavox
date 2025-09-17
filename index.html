@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Magnavox - Gaming Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #000000;
+            color: #FFFFFF;
+        }
+        .bg-gradient-radial-top {
+            background: hsl(0, 0%, 0%);
+            background-image: radial-gradient(circle at 50% 30%, #8B0000 0%, transparent 50%);
+        }
+
+        .bg-gradient-radial-bottom {
+            background: #000000;
+            background-image: radial-gradient(circle at 50% 100%, #8B0000 0%, transparent 50%);
+        }
+
+        /* Navigation Styles */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: transparent;
+        }
+
+        .logo-import {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            overflow: hidden;
+            background-color: #00000000;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .logo-import:hover {
+            transform: scale(1.1);
+        }
+
+        .logo-import img {
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
+            display: block;
+        }
+
+        nav .text-2xl {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        nav a {
+            font-size: 1rem;
+            font-weight: 500;
+            color: white;
+            transition: color 0.3s ease;
+            text-decoration: none;
+        }
+
+        nav a:hover {
+            color: #ef4444;
+        }
+
+        /* Account Button and Dropdown */
+        .account-container {
+            position: relative;
+        }
+
+        .account-icon {
+            border: none;
+            background: transparent;
+            color: white;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .account-icon:hover {
+            background-color: #1f2937;
+            transform: scale(1.1);
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #1f2937;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            min-width: 150px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+            border-radius: 8px;
+            margin: 4px;
+        }
+
+        .dropdown-item:hover {
+            background-color: #374151;
+            color: #ef4444;
+        }
+
+        /* Main Content Styles */
+        main img {
+            display: block;
+            margin: 0 auto 1.5rem auto;
+            max-width: 1000px;
+            width: 100%;
+            height: auto;
+        }
+
+        main h1 {
+            margin-top: 1rem;
+            font-size: clamp(2rem, 5vw, 3rem);
+        }
+
+        main p {
+            margin-top: 0.75rem;
+            font-size: clamp(1rem, 2.5vw, 1.125rem);
+        }
+
+        main .relative {
+            margin-top: 1.5rem;
+            aspect-ratio: 16 / 9;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Our Squad Section Styles */
+        .squad-section {
+            padding: 80px 0;
+            background: #000000;
+        }
+
+        .squad-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .team-leader {
+            text-align: center;
+        }
+
+        .responsibles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .member-card {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(139, 0, 0, 0.3);
+            box-shadow: 0 0 20px rgba(139, 0, 0, 0.3), 
+                        0 0 40px rgba(139, 0, 0, 0.1),
+                        inset 0 0 20px rgba(139, 0, 0, 0.1);
+        }
+
+        .member-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 30px rgba(139, 0, 0, 0.6),
+                        0 0 60px rgba(139, 0, 0, 0.3),
+                        0 15px 30px rgba(0, 0, 0, 0.5),
+                        inset 0 0 30px rgba(139, 0, 0, 0.2);
+            border-color: rgba(139, 0, 0, 0.6);
+        }
+
+        .member-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            background: linear-gradient(45deg, #8B0000, #DC143C);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+        }
+
+        .member-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .member-avatar.placeholder {
+            font-size: 48px;
+            color: white;
+        }
+
+        .member-title {
+            font-size: 1.1rem;
+            color: #ef4444;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .member-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        /* Our Activity Section Styles */
+        .activity-section {
+            padding: 80px 0;
+            background: #000000;
+        }
+
+        .activity-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .activity-card {
+            text-align: center;
+            padding: 40px 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(139, 0, 0, 0.3);
+            box-shadow: 0 0 20px rgba(139, 0, 0, 0.3), 
+                        0 0 40px rgba(139, 0, 0, 0.1),
+                        inset 0 0 20px rgba(139, 0, 0, 0.1);
+        }
+
+        .activity-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 0 40px rgba(139, 0, 0, 0.6),
+                        0 0 80px rgba(139, 0, 0, 0.3),
+                        0 20px 40px rgba(0, 0, 0, 0.5),
+                        inset 0 0 30px rgba(139, 0, 0, 0.2);
+            border-color: rgba(139, 0, 0, 0.6);
+        }
+
+        .activity-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ef4444;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .activity-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #d1d5db;
+            margin-bottom: 30px;
+        }
+
+        .cta-section {
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .cta-title {
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .book-ticket-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            background: linear-gradient(45deg, #8B0000, #DC143C);
+            color: white;
+            padding: 18px 40px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 10px 30px rgba(139, 0, 0, 0.4);
+        }
+
+        .book-ticket-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(139, 0, 0, 0.6);
+            background: linear-gradient(45deg, #A52A2A, #FF1493);
+        }
+
+        .book-ticket-btn .material-icons {
+            font-size: 1.5rem;
+        }
+
+        /* Footer Styles */
+        .footer {
+            padding: 60px 0 40px;
+            margin-top: 100px;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .footer-form {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(139, 0, 0, 0.3);
+            box-shadow: 0 0 30px rgba(139, 0, 0, 0.2);
+        }
+
+        .footer-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #ef4444;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(139, 0, 0, 0.3);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #ef4444;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: #9ca3af;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(45deg, #8B0000, #DC143C);
+            color: white;
+            padding: 15px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(139, 0, 0, 0.4);
+            background: linear-gradient(45deg, #A52A2A, #FF1493);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(139, 0, 0, 0.3);
+            color: #9ca3af;
+        }
+
+        @media (max-width: 768px) {
+            .responsibles {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 20px;
+            }
+            
+            .member-avatar {
+                width: 100px;
+                height: 100px;
+            }
+
+            .activity-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .activity-title {
+                font-size: 2rem;
+            }
+            
+            .cta-title {
+                font-size: 2.5rem;
+            }
+            
+            .footer-form {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-black text-white">
+    <div class="min-h-screen bg-gradient-radial-top">
+        <header class="container mx-auto px-6 py-6">
+            <nav class="flex justify-between items-center">
+                <div class="flex items-center space-x-4">
+                    <div class="logo-import" onclick="goToPage('home')">
+                        <img src="/assets/logo.png" alt="logo">
+                    </div>
+                    <span class="text-2xl font-bold"></span>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('about')">About</a>
+                    <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('shop')">Shop</a>
+                    <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('events')">Events</a>
+                    <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('contact')">Contact</a>
+                </div>
+                <div class="account-container">
+                    <button class="account-icon" onclick="toggleDropdown()">
+                        <span class="material-icons">account_circle</span>
+                    </button>
+                    <div class="dropdown-menu" id="accountDropdown">
+                        <a href="#" class="dropdown-item">Sign In</a>
+                        <a href="#" class="dropdown-item">Login</a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <main class="container mx-auto px-6 text-center mt-20 md:mt-32">
+            <img src="/assets/Magnavox.png" alt="magnavox">
+            <h1 class="text-4xl md:text-6xl font-bold leading-tight">
+                Unlock Your Gaming Potential.
+            </h1>
+            <p class="mt-6 max-w-2xl mx-auto text-lg text-gray-300">
+                Magnavox is the ultimate hub for gamers and learners. Dive into a world of competitive gaming, expert-led courses, and a vibrant community that shares your passion.
+            </p>
+            <div class="mt-12">
+                <div class="relative w-full max-w-4xl mx-auto aspect-video bg-gray-900 rounded-2xl shadow-2xl shadow-red-900/40 overflow-hidden">
+                    <iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="" class="w-full h-full" frameborder="0" src="https://www.youtube.com/embed/dQw4w9WgXcQ" title="YouTube video player"></iframe>
+                </div>
+            </div>
+        </main>
+
+        <!-- Our Squad Section -->
+        <section class="squad-section">
+            <div class="squad-grid">
+                <div class="team-leader">
+                    <h2 class="text-4xl md:text-5xl font-bold mb-12">Our Squad</h2>
+                    <div class="member-title">Team Leader</div>
+                    <div class="member-avatar placeholder">
+                        👤
+                    </div>
+                    <div class="member-name">Foulen Fouleni</div>
+                </div>
+
+                <div class="responsibles">
+                    <div class="member-card">
+                        <div class="member-title">Responsible</div>
+                        <div class="member-avatar placeholder">
+                            👤
+                        </div>
+                        <div class="member-name">Foulen Fouleni</div>
+                    </div>
+
+                    <div class="member-card">
+                        <div class="member-title">Responsible</div>
+                        <div class="member-avatar placeholder">
+                            👤
+                        </div>
+                        <div class="member-name">Foulen Fouleni</div>
+                    </div>
+
+                    <div class="member-card">
+                        <div class="member-title">Responsible</div>
+                        <div class="member-avatar placeholder">
+                            👤
+                        </div>
+                        <div class="member-name">Foulen Fouleni</div>
+                    </div>
+
+                    <div class="member-card">
+                        <div class="member-title">Responsible</div>
+                        <div class="member-avatar placeholder">
+                            👤
+                        </div>
+                        <div class="member-name">Foulen Fouleni</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Our Activity Section -->
+        <section class="activity-section bg-gradient-radial-bottom">
+            <div class="activity-grid">
+                <h2 class="text-5xl font-bold text-center mb-16 col-span-2">Our Activity</h2>
+                
+                <div class="activity-card">
+                    <h3 class="activity-title">Gaming</h3>
+                    <p class="activity-description">
+                        Immerse yourself in competitive gaming excellence. Join our tournaments, participate in exciting events, and compete with fellow gamers in popular titles. From casual gaming sessions to professional esports competitions, we provide the perfect platform to showcase your skills and connect with the gaming community.
+                    </p>
+                </div>
+
+                <div class="activity-card">
+                    <h3 class="activity-title">Training</h3>
+                    <p class="activity-description">
+                        Enhance your digital skills with our comprehensive training programs. Master programming languages, learn cutting-edge design techniques, and develop marketing strategies that drive results. Our expert-led courses cover everything from web development to digital marketing, empowering you with in-demand skills for the future.
+                    </p>
+                </div>
+            </div>
+
+            <div class="cta-section">
+                <h3 class="cta-title">Join Us</h3>
+                <button class="book-ticket-btn" onclick="goToPage('events')">
+                    Book a Ticket
+                    <span class="material-icons">edit</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer bg-gradient-radial-bottom">
+            <div class="footer-content">
+                <div class="footer-form">
+                    <h3 class="footer-title">Get in Touch</h3>
+                    <form>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="feedback">Your Feedback</label>
+                            <textarea id="feedback" name="feedback" rows="5" placeholder="Share your thoughts, suggestions, or questions with us..." required></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">Send Message</button>
+                    </form>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2025 Magnavox Gaming Hub. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Hidden page containers -->
+    <div id="about-page" class="page-container" style="display: none;"></div>
+    <div id="shop-page" class="page-container" style="display: none;"></div>
+    <div id="events-page" class="page-container" style="display: none;"></div>
+    <div id="contact-page" class="page-container" style="display: none;"></div>
+
+    <script>
+        // Page content definitions
+        const pages = {
+            about: `
+                <div class="min-h-screen bg-gradient-radial-top">
+                    <header class="container mx-auto px-6 py-6">
+                        <nav class="flex justify-between items-center">
+                            <div class="flex items-center space-x-4">
+                                <div class="logo-import" onclick="goToPage('home')">
+                                    <img src="/assets/logo.png" alt="logo">
+                                </div>
+                                <span class="text-2xl font-bold"></span>
+                            </div>
+                            <div class="hidden md:flex items-center space-x-8">
+                                <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('about')">About</a>
+                                <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('shop')">Shop</a>
+                                <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('events')">Events</a>
+                                <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('contact')">Contact</a>
+                            </div>
+                            <div class="account-container">
+                                <button class="account-icon" onclick="toggleDropdown()">
+                                    <span class="material-icons">account_circle</span>
+                                </button>
+                                <div class="dropdown-menu" id="accountDropdown">
+                                    <a href="#" class="dropdown-item">Sign In</a>
+                                    <a href="#" class="dropdown-item">Login</a>
+                                </div>
+                            </div>
+                        </nav>
+                    </header>
+
+                    <main class="container mx-auto px-6 py-20">
+                        <div class="text-center mb-20">
+                            <h1 class="text-5xl md:text-7xl font-bold mb-8 bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">
+                                About Magnavox
+                            </h1>
+                            <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                                Discover the story behind Tunisia's premier gaming and learning hub
+                            </p>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-16 mb-20">
+                            <div class="space-y-6">
+                                <h2 class="text-3xl font-bold text-red-500">Our Story</h2>
+                                <p class="text-lg text-gray-300 leading-relaxed">
+                                    Founded in 2023, Magnavox emerged from a passion to bridge the gap between gaming entertainment and professional skill development. We started as a small community of gamers in Tunis who believed that gaming could be more than just fun – it could be a pathway to learning and personal growth.
+                                </p>
+                                <p class="text-lg text-gray-300 leading-relaxed">
+                                    Today, we've grown into Tunisia's leading gaming and training hub, hosting competitive tournaments, offering cutting-edge courses, and building a vibrant community of learners and gamers.
+                                </p>
+                            </div>
+                            <div class="bg-gradient-to-br from-red-900/20 to-black/20 p-8 rounded-2xl border border-red-900/30">
+                                <div class="text-center">
+                                    <div class="text-6xl mb-4">🎮</div>
+                                    <h3 class="text-2xl font-bold text-red-500 mb-4">Our Mission</h3>
+                                    <p class="text-gray-300">
+                                        To create an inclusive space where gaming passion meets professional development, empowering our community to unlock their full potential.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid md:grid-cols-3 gap-8 mb-20">
+                            <div class="text-center bg-gradient-to-b from-red-900/10 to-transparent p-8 rounded-2xl border border-red-900/20">
+                                <div class="text-4xl mb-4">🏆</div>
+                                <h3 class="text-2xl font-bold text-red-500 mb-4">50+ Tournaments</h3>
+                                <p class="text-gray-300">Organized competitive gaming events across multiple titles</p>
+                            </div>
+                            <div class="text-center bg-gradient-to-b from-red-900/10 to-transparent p-8 rounded-2xl border border-red-900/20">
+                                <div class="text-4xl mb-4">👨‍🎓</div>
+                                <h3 class="text-2xl font-bold text-red-500 mb-4">1000+ Students</h3>
+                                <p class="text-gray-300">Trained in programming, design, and digital marketing</p>
+                            </div>
+                            <div class="text-center bg-gradient-to-b from-red-900/10 to-transparent p-8 rounded-2xl border border-red-900/20">
+                                <div class="text-4xl mb-4">🌟</div>
+                                <h3 class="text-2xl font-bold text-red-500 mb-4">Community First</h3>
+                                <p class="text-gray-300">Building lasting connections between gamers and learners</p>
+                            </div>
+                        </div>
+
+                        <div class="text-center bg-gradient-radial-bottom py-20">
+                            <h2 class="text-4xl font-bold mb-8 text-white">Why Choose Magnavox?</h2>
+                            <div class="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+                                <div class="space-y-4">
+                                    <h3 class="text-xl font-bold text-red-500">Expert Instructors</h3>
+                                    <p class="text-gray-300">Learn from industry professionals with years of real-world experience</p>
+                                </div>
+                                <div class="space-y-4">
+                                    <h3 class="text-xl font-bold text-red-500">State-of-Art Equipment</h3>
+                                    <p class="text-gray-300">Train and compete using the latest gaming and development hardware</p>
+                                </div>
+                                <div class="space-y-4">
+                                    <h3 class="text-xl font-bold text-red-500">Flexible Learning</h3>
+                                    <p class="text-gray-300">Choose from in-person sessions, online courses, or hybrid programs</p>
+                                </div>
+                                <div class="space-y-4">
+                                    <h3 class="text-xl font-bold text-red-500">Career Support</h3>
+                                    <p class="text-gray-300">Get job placement assistance and career guidance after completing our programs</p>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+
+                    <!-- Footer -->
+                    <footer class="footer bg-gradient-radial-bottom">
+                        <div class="footer-content">
+                            <div class="footer-form">
+                                <h3 class="footer-title">Get in Touch</h3>
+                                <form>
+                                    <div class="form-group">
+                                        <label for="email">Email Address</label>
+                                        <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="feedback">Your Feedback</label>
+                                        <textarea id="feedback" name="feedback" rows="5" placeholder="Share your thoughts, suggestions, or questions with us..." required></textarea>
+                                    </div>
+                                    <button type="submit" class="submit-btn">Send Message</button>
+                                </form>
+                            </div>
+                            <div class="footer-bottom">
+                                <p>&copy; 2025 Magnavox Gaming Hub. All rights reserved.</p>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            `,
+
+            shop: `
+                <div class="min-h-screen bg-gradient-radial-top">
+                    <header class="container mx-auto px-6 py-6">
+                        <nav class="flex justify-between items-center">
+                            <div class="flex items-center space-x-4">
+                                <div class="logo-import" onclick="goToPage('home')">
+                                    <img src="/assets/logo.png" alt="logo">
+                                </div>
+                                <span class="text-2xl font-bold"></span>
+                            </div>
+                            <div class="hidden md:flex items-center space-x-8">
+                                <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('about')">About</a>
+                                <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('shop')">Shop</a>
+                                <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('events')">Events</a>
+                                <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('contact')">Contact</a>
+                            </div>
+                            <div class="account-container">
+                                <button class="account-icon" onclick="toggleDropdown()">
+                                    <span class="material-icons">account_circle</span>
+                                </button>
+                                <div class="dropdown-menu" id="accountDropdown">
+                                    <a href="#" class="dropdown-item">Sign In</a>
+                                    <a href="#" class="dropdown-item">Login</a>
+                                </div>
+                            </div>
+                        </nav>
+                    </header>
+
+                    <main class="container mx-auto px-6 py-20">
+                        <div class="text-center mb-12">
+                            <h1 class="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">
+                                Magnavox Store
+                            </h1>
+                            <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+                                Gear up with exclusive Magnavox merchandise and gaming essentials
+                            </p>
+                        </div>
+
+                        <!-- Filter Section -->
+                        <div class="bg-gradient-to-r from-red-900/20 to-black/20 p-6 rounded-xl border border-red-900/30 mb-12">
+                            <div class="flex flex-wrap items-center justify-center gap-4">
+                                <span class="text-white font-semibold">Filter by:</span>
+                                <button onclick="filterProducts('all')" class="filter-btn active" data-filter="all">All</button>
+                                <button onclick="filterProducts('apparel')" class="filter-btn" data-filter="apparel">Apparel</button>
+                                <button onclick="filterProducts('accessories')" class="filter-btn" data-filter="accessories">Accessories</button>
+                                <button onclick="filterProducts('gaming')" class="filter-btn" data-filter="gaming">Gaming</button>
+                                <div class="ml-4 flex items-center gap-2">
+                                    <label class="text-white">Sort:</label>
+                                    <select id="sortSelect" onchange="sortProducts()" class="bg-gray-800 text-white px-3 py-1 rounded border border-red-900/30">
+                                        <option value="name">Name A-Z</option>
+                                        <option value="price-low">Price: Low to High</option>
+                                        <option value="price-high">Price: High to Low</option>
+                                        <option value="rating">Rating</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Products Grid -->
+                        <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-12">
+                            <!-- Products will be populated by JavaScript -->
+                        </div>
+
+                        <!-- Pagination -->
+                        <div class="flex justify-center items-center gap-4">
+                            <button onclick="changePage(-1)" class="px-4 py-2 bg-red-900 text-white rounded hover:bg-red-800 transition-colors">Previous</button>
+                            <span id="page-info" class="text-white">Page 1 of 3</span>
+                            <button onclick="changePage(1)" class="px-4 py-2 bg-red-900 text-white rounded hover:bg-red-800 transition-colors">Next</button>
+                        </div>
+                    </main>
+
+                    <!-- Footer -->
+                    <footer class="footer bg-gradient-radial-bottom">
+                        <div class="footer-content">
+                            <div class="footer-form">
+                                <h3 class="footer-title">Get in Touch</h3>
+                                <form>
+                                    <div class="form-group">
+                                        <label for="email">Email Address</label>
+                                        <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="feedback">Your Feedback</label>
+                                        <textarea id="feedback" name="feedback" rows="5" placeholder="Share your thoughts, suggestions, or questions with us..." required></textarea>
+                                    </div>
+                                    <button type="submit" class="submit-btn">Send Message</button>
+                                </form>
+                            </div>
+                            <div class="footer-bottom">
+                                <p>&copy; 2025 Magnavox Gaming Hub. All rights reserved.</p>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            `,
+
+            events: `
+                <div class="min-h-screen bg-gradient-radial-top">
+                    <header class="container mx-auto px-6 py-6">
+                        <nav class="flex justify-between items-center">
+                            <div class="flex items-center space-x-4">
+                                <div class="logo-import" onclick="goToPage('home')">
+                                    <img src="/assets/logo.png" alt="logo">
+                                </div>
+                                <span class="text-2xl font-bold"></span>
+                            </div>
+                            <div class="hidden md:flex items-center space-x-8">
+                                <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('about')">About</a>
+                                <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('shop')">Shop</a>
+                                <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('events')">Events</a>
+                                <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('contact')">Contact</a>
+                            </div>
+                            <div class="account-container">
+                                <button class="account-icon" onclick="toggleDropdown()">
+                                    <span class="material-icons">account_circle</span>
+                                </button>
+                                <div class="dropdown-menu" id="accountDropdown">
+                                    <a href="#" class="dropdown-item">Sign In</a>
+                                    <a href="#" class="dropdown-item">Login</a>
+                                </div>
+                            </div>
+                        </nav>
+                    </header>
+
+                    <main class="container mx-auto px-6 py-20">
+                        <div class="text-center mb-12">
+                            <h1 class="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">
+                                Events & Tournaments
+                            </h1>
+                            <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+                                Join our gaming tournaments and training sessions
+                            </p>
+                        </div>
+
+                        <!-- Category Tabs -->
+                        <div class="flex justify-center mb-12">
+                            <div class="bg-gradient-to-r from-red-900/20 to-black/20 p-2 rounded-xl border border-red-900/30">
+                                <button onclick="showEventCategory('gaming')" id="gaming-tab" class="event-tab-btn active px-8 py-3 rounded-lg font-semibold transition-all">
+                                    🎮 Gaming Events
+                                </button>
+                                <button onclick="showEventCategory('training')" id="training-tab" class="event-tab-btn px-8 py-3 rounded-lg font-semibold transition-all">
+                                    📚 Training Sessions
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Gaming Events Section -->
+                        <div id="gaming-events" class="event-category">
+                            <div class="grid gap-8">
+                                <!-- Event cards will be populated by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Training Events Section -->
+                        <div id="training-events" class="event-category hidden">
+                            <div class="grid gap-8">
+                                <!-- Training cards will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </main>
+
+                    <!-- Footer -->
+                    <footer class="footer bg-gradient-radial-bottom">
+                        <div class="footer-content">
+                            <div class="footer-form">
+                                <h3 class="footer-title">Get in Touch</h3>
+                                <form>
+                                    <div class="form-group">
+                                        <label for="email">Email Address</label>
+                                        <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="feedback">Your Feedback</label>
+                                        <textarea id="feedback" name="feedback" rows="5" placeholder="Share your thoughts, suggestions, or questions with us..." required></textarea>
+                                    </div>
+                                    <button type="submit" class="submit-btn">Send Message</button>
+                                </form>
+                            </div>
+                            <div class="footer-bottom">
+                                <p>&copy; 2025 Magnavox Gaming Hub. All rights reserved.</p>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            `,
+
+            contact: `
+                <div class="min-h-screen bg-gradient-radial-top">
+                    <header class="container mx-auto px-6 py-6">
+                        <nav class="flex justify-between items-center">
+                            <div class="flex items-center space-x-4">
+                                <div class="logo-import" onclick="goToPage('home')">
+                                    <img src="/assets/logo.png" alt="logo">
+                                </div>
+                                <span class="text-2xl font-bold"></span>
+                            </div>
+                            <div class="hidden md:flex items-center space-x-8">
+                                <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('about')">About</a>
+                                <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('shop')">Shop</a>
+                                <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('events')">Events</a>
+                                <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('contact')">Contact</a>
+                            </div>
+                            <div class="account-container">
+                                <button class="account-icon" onclick="toggleDropdown()">
+                                    <span class="material-icons">account_circle</span>
+                                </button>
+                                <div class="dropdown-menu" id="accountDropdown">
+                                    <a href="#" class="dropdown-item">Sign In</a>
+                                    <a href="#" class="dropdown-item">Login</a>
+                                </div>
+                            </div>
+                        </nav>
+                    </header>
+
+                    <main class="container mx-auto px-6 py-20">
+                        <div class="text-center mb-16">
+                            <h1 class="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">
+                                Contact Us
+                            </h1>
+                            <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+                                Get in touch with our team - we're here to help you level up!
+                            </p>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-12 max-w-6xl mx-auto">
+                            <!-- Contact Information -->
+                            <div class="space-y-8">
+                                <div>
+                                    <h2 class="text-3xl font-bold text-red-500 mb-8">Get In Touch</h2>
+                                    
+                                    <div class="space-y-6">
+                                        <div class="flex items-start space-x-4 p-6 bg-gradient-to-r from-red-900/20 to-black/20 rounded-xl border border-red-900/30">
+                                            <div class="text-red-500 text-2xl">📍</div>
+                                            <div>
+                                                <h3 class="font-semibold text-white mb-2">Location</h3>
+                                                <p class="text-gray-300">Avenue Habib Bourguiba<br>Tunis, Tunisia 1000</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start space-x-4 p-6 bg-gradient-to-r from-red-900/20 to-black/20 rounded-xl border border-red-900/30">
+                                            <div class="text-red-500 text-2xl">📞</div>
+                                            <div>
+                                                <h3 class="font-semibold text-white mb-2">Phone</h3>
+                                                <p class="text-gray-300">+216 70 123 456<br>+216 25 987 654</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start space-x-4 p-6 bg-gradient-to-r from-red-900/20 to-black/20 rounded-xl border border-red-900/30">
+                                            <div class="text-red-500 text-2xl">✉️</div>
+                                            <div>
+                                                <h3 class="font-semibold text-white mb-2">Email</h3>
+                                                <p class="text-gray-300">info@magnavox.tn<br>support@magnavox.tn</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="flex items-start space-x-4 p-6 bg-gradient-to-r from-red-900/20 to-black/20 rounded-xl border border-red-900/30">
+                                            <div class="text-red-500 text-2xl">🕒</div>
+                                            <div>
+                                                <h3 class="font-semibold text-white mb-2">Hours</h3>
+                                                <p class="text-gray-300">Monday - Friday: 9:00 AM - 9:00 PM<br>Weekend: 10:00 AM - 8:00 PM</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Social Media -->
+                                <div>
+                                    <h3 class="text-2xl font-bold text-red-500 mb-4">Follow Us</h3>
+                                    <div class="flex space-x-4">
+                                        <a href="#" class="w-12 h-12 bg-gradient-to-r from-red-900 to-red-700 rounded-full flex items-center justify-center hover:scale-110 transition-transform">
+                                            <span class="text-white font-bold">f</span>
+                                        </a>
+                                        <a href="#" class="w-12 h-12 bg-gradient-to-r from-red-900 to-red-700 rounded-full flex items-center justify-center hover:scale-110 transition-transform">
+                                            <span class="text-white font-bold">@</span>
+                                        </a>
+                                        <a href="#" class="w-12 h-12 bg-gradient-to-r from-red-900 to-red-700 rounded-full flex items-center justify-center hover:scale-110 transition-transform">
+                                            <span class="text-white font-bold">in</span>
+                                        </a>
+                                        <a href="#" class="w-12 h-12 bg-gradient-to-r from-red-900 to-red-700 rounded-full flex items-center justify-center hover:scale-110 transition-transform">
+                                            <span class="text-white font-bold">YT</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contact Form -->
+                            <div class="bg-gradient-to-br from-red-900/20 to-black/20 p-8 rounded-2xl border border-red-900/30">
+                                <h2 class="text-3xl font-bold text-red-500 mb-8">Send us a Message</h2>
+                                <form class="space-y-6">
+                                    <div class="grid md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label class="block text-white font-semibold mb-2">First Name</label>
+                                            <input type="text" class="w-full p-3 bg-black/50 border border-red-900/30 rounded-lg text-white focus:border-red-500 focus:outline-none" required>
+                                        </div>
+                                        <div>
+                                            <label class="block text-white font-semibold mb-2">Last Name</label>
+                                            <input type="text" class="w-full p-3 bg-black/50 border border-red-900/30 rounded-lg text-white focus:border-red-500 focus:outline-none" required>
+                                        </div>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-white font-semibold mb-2">Email</label>
+                                        <input type="email" class="w-full p-3 bg-black/50 border border-red-900/30 rounded-lg text-white focus:border-red-500 focus:outline-none" required>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-white font-semibold mb-2">Subject</label>
+                                        <select class="w-full p-3 bg-black/50 border border-red-900/30 rounded-lg text-white focus:border-red-500 focus:outline-none">
+                                            <option value="">Select a topic</option>
+                                            <option value="general">General Inquiry</option>
+                                            <option value="training">Training Programs</option>
+                                            <option value="events">Gaming Events</option>
+                                            <option value="partnership">Partnership</option>
+                                            <option value="support">Technical Support</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-white font-semibold mb-2">Message</label>
+                                        <textarea rows="5" class="w-full p-3 bg-black/50 border border-red-900/30 rounded-lg text-white focus:border-red-500 focus:outline-none resize-none" placeholder="Tell us how we can help you..." required></textarea>
+                                    </div>
+                                    
+                                    <button type="submit" class="w-full bg-gradient-to-r from-red-900 to-red-700 text-white py-3 px-6 rounded-lg font-semibold hover:from-red-800 hover:to-red-600 transition-all transform hover:scale-105">
+                                        Send Message
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Map Section -->
+                        <div class="mt-20">
+                            <h2 class="text-3xl font-bold text-center text-red-500 mb-8">Find Us</h2>
+                            <div class="bg-gradient-to-r from-red-900/20 to-black/20 p-4 rounded-2xl border border-red-900/30">
+                                <div class="w-full h-96 bg-gray-800 rounded-xl flex items-center justify-center">
+                                    <div class="text-center">
+                                        <div class="text-6xl mb-4">🗺️</div>
+                                        <p class="text-white text-xl">Interactive Map</p>
+                                        <p class="text-gray-400">Avenue Habib Bourguiba, Tunis</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
+
+                    <!-- Footer -->
+                    <footer class="footer bg-gradient-radial-bottom">
+                        <div class="footer-content">
+                            <div class="footer-form">
+                                <h3 class="footer-title">Get in Touch</h3>
+                                <form>
+                                    <div class="form-group">
+                                        <label for="email">Email Address</label>
+                                        <input type="email" id="email" name="email" placeholder="your.email@example.com" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="feedback">Your Feedback</label>
+                                        <textarea id="feedback" name="feedback" rows="5" placeholder="Share your thoughts, suggestions, or questions with us..." required></textarea>
+                                    </div>
+                                    <button type="submit" class="submit-btn">Send Message</button>
+                                </form>
+                            </div>
+                            <div class="footer-bottom">
+                                <p>&copy; 2025 Magnavox Gaming Hub. All rights reserved.</p>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            `
+        };
+
+        // Current page and pagination
+        let currentPage = 'home';
+        let currentProductPage = 1;
+        let productsPerPage = 8;
+        let filteredProducts = [];
+
+        // Sample products data
+        const products = [
+            {
+                id: 1,
+                name: "Magnavox Gaming T-Shirt",
+                category: "apparel",
+                price: 45,
+                rating: 4.8,
+                description: "Premium cotton t-shirt with Magnavox logo",
+                image: "🎮"
+            },
+            {
+                id: 2,
+                name: "Gaming Hoodie - Red Edition",
+                category: "apparel",
+                price: 89,
+                rating: 4.9,
+                description: "Comfortable hoodie perfect for gaming sessions",
+                image: "👕"
+            },
+            {
+                id: 3,
+                name: "Magnavox Coffee Mug",
+                category: "accessories",
+                price: 25,
+                rating: 4.5,
+                description: "Start your day with our premium ceramic mug",
+                image: "☕"
+            },
+            {
+                id: 4,
+                name: "RGB Gaming Mousepad",
+                category: "gaming",
+                price: 65,
+                rating: 4.7,
+                description: "Large RGB mousepad with wireless charging",
+                image: "🖱️"
+            },
+            {
+                id: 5,
+                name: "Magnavox Cap",
+                category: "apparel",
+                price: 35,
+                rating: 4.6,
+                description: "Adjustable cap with embroidered logo",
+                image: "🧢"
+            },
+            {
+                id: 6,
+                name: "Gaming Keyboard",
+                category: "gaming",
+                price: 150,
+                rating: 4.8,
+                description: "Mechanical keyboard with RGB backlighting",
+                image: "⌨️"
+            },
+            {
+                id: 7,
+                name: "Water Bottle",
+                category: "accessories",
+                price: 20,
+                rating: 4.4,
+                description: "Insulated water bottle with Magnavox branding",
+                image: "💧"
+            },
+            {
+                id: 8,
+                name: "Gaming Chair Cushion",
+                category: "gaming",
+                price: 75,
+                rating: 4.6,
+                description: "Ergonomic cushion for long gaming sessions",
+                image: "🪑"
+            },
+            {
+                id: 9,
+                name: "Magnavox Jacket",
+                category: "apparel",
+                price: 120,
+                rating: 4.9,
+                description: "Weather-resistant jacket with team colors",
+                image: "🧥"
+            },
+            {
+                id: 10,
+                name: "Gaming Headset Stand",
+                category: "accessories",
+                price: 40,
+                rating: 4.3,
+                description: "RGB headset stand with USB hub",
+                image: "🎧"
+            },
+            {
+                id: 11,
+                name: "Pro Gaming Mouse",
+                category: "gaming",
+                price: 95,
+                rating: 4.8,
+                description: "High-precision gaming mouse with customizable DPI",
+                image: "🖱️"
+            },
+            {
+                id: 12,
+                name: "Team Jersey",
+                category: "apparel",
+                price: 55,
+                rating: 4.7,
+                description: "Official Magnavox team jersey",
+                image: "👔"
+            }
+        ];
+
+        // Gaming events data
+        const gamingEvents = [
+            {
+                id: 1,
+                title: "Valorant Championship 2024",
+                status: "finished",
+                date: "December 15, 2024",
+                description: "Epic tournament featuring the best Valorant teams in Tunisia. Prize pool of 5000 TND.",
+                participants: 32,
+                prize: "5000 TND"
+            },
+            {
+                id: 2,
+                title: "FIFA 25 World Cup",
+                status: "ongoing",
+                date: "January 20, 2025",
+                description: "Current FIFA tournament with live streaming. Join the excitement!",
+                participants: 16,
+                prize: "3000 TND"
+            },
+            {
+                id: 3,
+                title: "League of Legends Spring Tournament",
+                status: "upcoming",
+                date: "February 28, 2025",
+                description: "Get ready for the biggest LoL tournament of the year. Registration open!",
+                participants: 40,
+                prize: "8000 TND"
+            },
+            {
+                id: 4,
+                title: "CS2 Major Championship",
+                status: "upcoming",
+                date: "March 15, 2025",
+                description: "Counter-Strike 2 championship featuring international teams.",
+                participants: 24,
+                prize: "10000 TND"
+            }
+        ];
+
+        // Training events data
+        const trainingEvents = [
+            {
+                id: 1,
+                title: "Web Development Bootcamp",
+                status: "finished",
+                date: "November 1-30, 2024",
+                description: "Intensive 4-week program covering HTML, CSS, JavaScript, and React.",
+                trainer: "Ahmed Ben Salem",
+                trainerBio: "Senior Full-Stack Developer with 8+ years experience",
+                duration: "4 weeks",
+                price: "800 TND"
+            },
+            {
+                id: 2,
+                title: "Digital Marketing Masterclass",
+                status: "ongoing",
+                date: "January 10 - February 10, 2025",
+                description: "Learn SEO, social media marketing, and digital advertising strategies.",
+                trainer: "Salma Haddad",
+                trainerBio: "Digital Marketing Expert and Google Certified Trainer",
+                duration: "1 month",
+                price: "650 TND"
+            },
+            {
+                id: 3,
+                title: "Python Programming for Beginners",
+                status: "upcoming",
+                date: "March 1-31, 2025",
+                description: "Start your programming journey with Python fundamentals and projects.",
+                trainer: "Mohamed Cherif",
+                trainerBio: "Software Engineer and Python Specialist",
+                duration: "4 weeks",
+                price: "700 TND"
+            },
+            {
+                id: 4,
+                title: "UI/UX Design Workshop",
+                status: "upcoming",
+                date: "April 5-26, 2025",
+                description: "Master design thinking, prototyping, and user experience principles.",
+                trainer: "Ines Trabelsi",
+                trainerBio: "Senior UI/UX Designer with 6+ years in tech industry",
+                duration: "3 weeks",
+                price: "900 TND"
+            }
+        ];
+
+        // Navigation function
+        function goToPage(page) {
+            // Hide current page
+            if (currentPage === 'home') {
+                document.querySelector('.min-h-screen').style.display = 'none';
+            } else {
+                document.getElementById(currentPage + '-page').style.display = 'none';
+            }
+            
+            currentPage = page;
+            
+            // Show new page
+            if (page === 'home') {
+                document.querySelector('.min-h-screen').style.display = 'block';
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
+            } else {
+                document.getElementById(page + '-page').innerHTML = pages[page];
+                document.getElementById(page + '-page').style.display = 'block';
+                document.body.scrollTop = 0;
+                document.documentElement.scrollTop = 0;
+                
+                // Initialize page-specific functionality
+                if (page === 'shop') {
+                    initializeShop();
+                } else if (page === 'events') {
+                    initializeEvents();
+                }
+            }
+        }
+
+        // Shop functionality
+        function initializeShop() {
+            filteredProducts = [...products];
+            displayProducts();
+        }
+
+        function filterProducts(category) {
+            // Update active filter button
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`[data-filter="${category}"]`).classList.add('active');
+            
+            // Filter products
+            if (category === 'all') {
+                filteredProducts = [...products];
+            } else {
+                filteredProducts = products.filter(product => product.category === category);
+            }
+            
+            currentProductPage = 1;
+            displayProducts();
+        }
+
+        function sortProducts() {
+            const sortBy = document.getElementById('sortSelect').value;
+            
+            switch(sortBy) {
+                case 'name':
+                    filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+                    break;
+                case 'price-low':
+                    filteredProducts.sort((a, b) => a.price - b.price);
+                    break;
+                case 'price-high':
+                    filteredProducts.sort((a, b) => b.price - a.price);
+                    break;
+                case 'rating':
+                    filteredProducts.sort((a, b) => b.rating - a.rating);
+                    break;
+            }
+            
+            displayProducts();
+        }
+
+        function displayProducts() {
+            const grid = document.getElementById('products-grid');
+            const startIndex = (currentProductPage - 1) * productsPerPage;
+            const endIndex = startIndex + productsPerPage;
+            const currentProducts = filteredProducts.slice(startIndex, endIndex);
+            
+            grid.innerHTML = currentProducts.map(product => `
+                <div class="product-card bg-gradient-to-br from-red-900/20 to-black/20 p-6 rounded-xl border border-red-900/30 hover:border-red-500 transition-all hover:transform hover:scale-105">
+                    <div class="text-6xl mb-4 text-center">${product.image}</div>
+                    <h3 class="text-xl font-bold text-white mb-2">${product.name}</h3>
+                    <p class="text-gray-300 text-sm mb-4">${product.description}</p>
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <span class="text-yellow-400">★</span>
+                            <span class="text-white ml-1">${product.rating}</span>
+                        </div>
+                        <span class="text-2xl font-bold text-red-500">${product.price} TND</span>
+                    </div>
+                    <button class="w-full bg-gradient-to-r from-red-900 to-red-700 text-white py-2 px-4 rounded-lg hover:from-red-800 hover:to-red-600 transition-all">
+                        Add to Cart
+                    </button>
+                </div>
+            `).join('');
+            
+            // Update pagination
+            const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+            document.getElementById('page-info').textContent = `Page ${currentProductPage} of ${totalPages}`;
+        }
+
+        function changePage(direction) {
+            const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+            const newPage = currentProductPage + direction;
+            
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentProductPage = newPage;
+                displayProducts();
+            }
+        }
+
+        // Events functionality
+        function initializeEvents() {
+            showEventCategory('gaming');
+        }
+
+        function showEventCategory(category) {
+            // Update active tab
+            document.querySelectorAll('.event-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(category + '-tab').classList.add('active');
+            
+            // Show/hide sections
+            document.querySelectorAll('.event-category').forEach(section => section.classList.add('hidden'));
+            document.getElementById(category + '-events').classList.remove('hidden');
+            
+            // Populate events
+            if (category === 'gaming') {
+                displayGamingEvents();
+            } else {
+                displayTrainingEvents();
+            }
+        }
+
+        function displayGamingEvents() {
+            const container = document.querySelector('#gaming-events .grid');
+            container.innerHTML = gamingEvents.map(event => `
+                <div class="event-card bg-gradient-to-r from-red-900/20 to-black/20 p-8 rounded-xl border border-red-900/30 hover:border-red-500 transition-all">
+                    <div class="flex items-start justify-between mb-6">
+                        <div>
+                            <h3 class="text-2xl font-bold text-white mb-2">${event.title}</h3>
+                            <p class="text-gray-300">${event.date}</p>
+                        </div>
+                        <div class="event-status ${event.status}">
+                            ${getStatusBadge(event.status)}
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-6 leading-relaxed">${event.description}</p>
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="text-center p-4 bg-black/30 rounded-lg">
+                            <div class="text-2xl font-bold text-red-500">${event.participants}</div>
+                            <div class="text-sm text-gray-400">Participants</div>
+                        </div>
+                        <div class="text-center p-4 bg-black/30 rounded-lg">
+                            <div class="text-2xl font-bold text-red-500">${event.prize}</div>
+                            <div class="text-sm text-gray-400">Prize Pool</div>
+                        </div>
+                    </div>
+                    ${getEventButton(event.status)}
+                </div>
+            `).join('');
+        }
+
+        function displayTrainingEvents() {
+            const container = document.querySelector('#training-events .grid');
+            container.innerHTML = trainingEvents.map(event => `
+                <div class="event-card bg-gradient-to-r from-red-900/20 to-black/20 p-8 rounded-xl border border-red-900/30 hover:border-red-500 transition-all">
+                    <div class="flex items-start justify-between mb-6">
+                        <div>
+                            <h3 class="text-2xl font-bold text-white mb-2">${event.title}</h3>
+                            <p class="text-gray-300">${event.date}</p>
+                        </div>
+                        <div class="event-status ${event.status}">
+                            ${getStatusBadge(event.status)}
+                        </div>
+                    </div>
+                    <p class="text-gray-300 mb-4 leading-relaxed">${event.description}</p>
+                    
+                    <div class="trainer-info mb-6 p-4 bg-black/20 rounded-lg border border-red-900/20">
+                        <h4 class="font-bold text-red-500 mb-2">👨‍🏫 Trainer: ${event.trainer}</h4>
+                        <p class="text-sm text-gray-300">${event.trainerBio}</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div class="text-center p-4 bg-black/30 rounded-lg">
+                            <div class="text-xl font-bold text-red-500">${event.duration}</div>
+                            <div class="text-sm text-gray-400">Duration</div>
+                        </div>
+                        <div class="text-center p-4 bg-black/30 rounded-lg">
+                            <div class="text-xl font-bold text-red-500">${event.price}</div>
+                            <div class="text-sm text-gray-400">Price</div>
+                        </div>
+                    </div>
+                    ${getEventButton(event.status)}
+                </div>
+            `).join('');
+        }
+
+        function getStatusBadge(status) {
+            const badges = {
+                finished: '<span class="px-3 py-1 bg-gray-600 text-white text-sm rounded-full">✅ Finished</span>',
+                ongoing: '<span class="px-3 py-1 bg-green-600 text-white text-sm rounded-full animate-pulse">🔴 Live</span>',
+                upcoming: '<span class="px-3 py-1 bg-red-600 text-white text-sm rounded-full">🔜 Upcoming</span>'
+            };
+            return badges[status];
+        }
+
+        function getEventButton(status) {
+            const buttons = {
+                finished: '<button disabled class="w-full py-3 bg-gray-600 text-gray-300 rounded-lg cursor-not-allowed">Event Finished</button>',
+                ongoing: '<button class="w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors">Watch Live</button>',
+                upcoming: '<button class="w-full py-3 bg-gradient-to-r from-red-900 to-red-700 hover:from-red-800 hover:to-red-600 text-white rounded-lg transition-all">Register Now</button>'
+            };
+            return buttons[status];
+        }
+
+        function toggleDropdown() {
+            const dropdown = document.getElementById('accountDropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const accountContainer = document.querySelector('.account-container');
+            const dropdown = document.getElementById('accountDropdown');
+            
+            if (accountContainer && !accountContainer.contains(event.target)) {
+                if (dropdown) dropdown.classList.remove('active');
+            }
+        });
+
+        // Add styles for new elements
+        const additionalStyles = `
+            <style>
+                .filter-btn {
+                    background: transparent;
+                    color: #9CA3AF;
+                    border: 1px solid rgba(139, 0, 0, 0.3);
+                    padding: 8px 16px;
+                    border-radius: 6px;
+                    transition: all 0.3s ease;
+                    cursor: pointer;
+                }
+                
+                .filter-btn:hover, .filter-btn.active {
+                    background: linear-gradient(45deg, #8B0000, #DC143C);
+                    color: white;
+                    border-color: #DC143C;
+                }
+                
+                .event-tab-btn {
+                    background: transparent;
+                    color: #9CA3AF;
+                    border: none;
+                    cursor: pointer;
+                }
+                
+                .event-tab-btn:hover, .event-tab-btn.active {
+                    background: linear-gradient(45deg, #8B0000, #DC143C);
+                    color: white;
+                }
+                
+                .product-card, .event-card {
+                    transition: all 0.3s ease;
+                }
+                
+                .product-card:hover {
+                    box-shadow: 0 0 30px rgba(139, 0, 0, 0.4);
+                }
+                
+                .event-card:hover {
+                    box-shadow: 0 0 30px rgba(139, 0, 0, 0.4);
+                }
+                
+                .page-container {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    min-height: 100vh;
+                    background: #000000;
+                }
+                
+                @keyframes pulse {
+                    0%, 100% { opacity: 1; }
+                    50% { opacity: 0.5; }
+                }
+                
+                .animate-pulse {
+                    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+                }
+            </style>
+        `;
+        
+        // Add additional styles to head
+        document.head.insertAdjacentHTML('beforeend', additionalStyles);
+    </script>
+</body>
+</html>
