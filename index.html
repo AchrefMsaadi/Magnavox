@@ -5,6 +5,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
     <title>Magnavox - Gaming Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
     <style>
@@ -429,6 +430,37 @@
             color: #9ca3af;
         }
 
+        /* Auth Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+        .modal-overlay.active { display: flex; }
+        .auth-modal {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(31,41,55,0.95);
+            border: 1px solid rgba(239,68,68,0.3);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        }
+        .auth-input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(239,68,68,0.25);
+            border-radius: 10px;
+            color: white;
+        }
+        .auth-input:focus { outline: none; border-color: #ef4444; }
+
         @media (max-width: 768px) {
             .responsibles {
                 grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -476,12 +508,15 @@
                     <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('contact')">Contact</a>
                 </div>
                 <div class="account-container">
+                    <span class="text-sm text-gray-300 mr-2" data-username-display></span>
                     <button class="account-icon" onclick="toggleDropdown()">
                         <span class="material-icons">account_circle</span>
                     </button>
                     <div class="dropdown-menu" id="accountDropdown">
-                        <a href="#" class="dropdown-item">Sign In</a>
-                        <a href="#" class="dropdown-item">Login</a>
+                        <a href="#" class="dropdown-item" onclick="openAuthModal('login')">Login</a>
+                        <a href="#" class="dropdown-item" onclick="openAuthModal('signup')">Sign Up</a>
+                        <a href="#" class="dropdown-item hidden" data-profile-settings>Profile Settings</a>
+                        <a href="#" class="dropdown-item hidden" data-logout>Logout</a>
                     </div>
                 </div>
             </nav>
@@ -608,8 +643,51 @@
     <div id="shop-page" class="page-container" style="display: none;"></div>
     <div id="events-page" class="page-container" style="display: none;"></div>
     <div id="contact-page" class="page-container" style="display: none;"></div>
+    <div id="profile-page" class="page-container" style="display: none;"></div>
+
+    <!-- Auth Modal -->
+    <div id="authOverlay" class="modal-overlay">
+        <div class="auth-modal">
+            <div class="text-center mb-4">
+                <h3 id="authTitle" class="text-2xl font-bold">Login</h3>
+                <p class="text-gray-400 text-sm">Welcome to Magnavox</p>
+            </div>
+            <form id="authForm" onsubmit="handleAuthSubmit(event)">
+                <div id="usernameField" class="mb-3" style="display:none;">
+                    <label class="text-sm text-gray-300 mb-1 block">Username</label>
+                    <input id="authUsername" type="text" class="auth-input" placeholder="Your gamer tag">
+                </div>
+                <div class="mb-3">
+                    <label class="text-sm text-gray-300 mb-1 block">Email Address</label>
+                    <input id="authEmail" type="email" class="auth-input" required placeholder="you@example.com">
+                </div>
+                <div class="mb-4">
+                    <label class="text-sm text-gray-300 mb-1 block">Password</label>
+                    <input id="authPassword" type="password" class="auth-input" required placeholder="••••••••">
+                </div>
+                <button id="authSubmitBtn" class="w-full bg-gradient-to-r from-red-900 to-red-700 text-white py-3 rounded-xl font-semibold hover:from-red-800 hover:to-red-600 transition-all">Login</button>
+            </form>
+            <div class="mt-4 text-center text-sm text-gray-300">
+                <button class="underline" onclick="toggleAuthMode()" id="toggleAuthModeBtn">Don't have an account? Sign up</button>
+            </div>
+            <div class="mt-6">
+                <button onclick="oauthGoogle()" class="w-full bg-white/10 hover:bg-white/15 text-white py-2 rounded-lg border border-white/20">Continue with Google</button>
+            </div>
+            <div id="authMessage" class="mt-4 text-center text-sm text-green-400"></div>
+            <div class="mt-4 text-center">
+                <button onclick="closeAuthModal()" class="text-gray-400 hover:text-white">Close</button>
+            </div>
+        </div>
+    </div>
 
     <script>
+        // Supabase client
+        const supabase = window.supabase.createClient(
+            'https://eornhduhrlryskpgblee.supabase.co',
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVvcm5oZHVocmxyeXNrcGdibGVlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgxMDc0NTEsImV4cCI6MjA3MzY4MzQ1MX0.e2KUXaoMvL9SkY17y9f9XSibtqDCu6ypZi2X6b7GFJA'
+        );
+        let currentUser = null;
+
         // Page content definitions
         const pages = {
             about: `
@@ -629,12 +707,15 @@
                                 <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('contact')">Contact</a>
                             </div>
                             <div class="account-container">
+                                <span class="text-sm text-gray-300 mr-2" data-username-display></span>
                                 <button class="account-icon" onclick="toggleDropdown()">
                                     <span class="material-icons">account_circle</span>
                                 </button>
                                 <div class="dropdown-menu" id="accountDropdown">
-                                    <a href="#" class="dropdown-item">Sign In</a>
-                                    <a href="#" class="dropdown-item">Login</a>
+                                    <a href="#" class="dropdown-item" onclick="openAuthModal('login')">Login</a>
+                                    <a href="#" class="dropdown-item" onclick="openAuthModal('signup')">Sign Up</a>
+                                    <a href="#" class="dropdown-item hidden" data-profile-settings>Profile Settings</a>
+                                    <a href="#" class="dropdown-item hidden" data-logout>Logout</a>
                                 </div>
                             </div>
                         </nav>
@@ -754,12 +835,15 @@
                                 <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('contact')">Contact</a>
                             </div>
                             <div class="account-container">
+                                <span class="text-sm text-gray-300 mr-2" data-username-display></span>
                                 <button class="account-icon" onclick="toggleDropdown()">
                                     <span class="material-icons">account_circle</span>
                                 </button>
                                 <div class="dropdown-menu" id="accountDropdown">
-                                    <a href="#" class="dropdown-item">Sign In</a>
-                                    <a href="#" class="dropdown-item">Login</a>
+                                    <a href="#" class="dropdown-item" onclick="openAuthModal('login')">Login</a>
+                                    <a href="#" class="dropdown-item" onclick="openAuthModal('signup')">Sign Up</a>
+                                    <a href="#" class="dropdown-item hidden" data-profile-settings>Profile Settings</a>
+                                    <a href="#" class="dropdown-item hidden" data-logout>Logout</a>
                                 </div>
                             </div>
                         </nav>
@@ -854,8 +938,10 @@
                                     <span class="material-icons">account_circle</span>
                                 </button>
                                 <div class="dropdown-menu" id="accountDropdown">
-                                    <a href="#" class="dropdown-item">Sign In</a>
-                                    <a href="#" class="dropdown-item">Login</a>
+                                    <a href="#" class="dropdown-item" onclick="openAuthModal('login')">Login</a>
+                                    <a href="#" class="dropdown-item" onclick="openAuthModal('signup')">Sign Up</a>
+                                    <a href="#" class="dropdown-item hidden" data-profile-settings>Profile Settings</a>
+                                    <a href="#" class="dropdown-item hidden" data-logout>Logout</a>
                                 </div>
                             </div>
                         </nav>
@@ -944,8 +1030,10 @@
                                     <span class="material-icons">account_circle</span>
                                 </button>
                                 <div class="dropdown-menu" id="accountDropdown">
-                                    <a href="#" class="dropdown-item">Sign In</a>
-                                    <a href="#" class="dropdown-item">Login</a>
+                                    <a href="#" class="dropdown-item" onclick="openAuthModal('login')">Login</a>
+                                    <a href="#" class="dropdown-item" onclick="openAuthModal('signup')">Sign Up</a>
+                                    <a href="#" class="dropdown-item hidden" data-profile-settings>Profile Settings</a>
+                                    <a href="#" class="dropdown-item hidden" data-logout>Logout</a>
                                 </div>
                             </div>
                         </nav>
@@ -1106,6 +1194,68 @@
                 </div>
             `
         };
+
+        // Inject Profile page markup when navigating to profile
+        pages.profile = `
+            <div class="min-h-screen bg-gradient-radial-top">
+                <header class="container mx-auto px-6 py-6">
+                    <nav class="flex justify-between items-center">
+                        <div class="flex items-center space-x-4">
+                            <div class="logo-import" onclick="goToPage('home')">
+                                <img src="/assets/logo.png" alt="logo">
+                            </div>
+                            <span class="text-2xl font-bold"></span>
+                        </div>
+                        <div class="hidden md:flex items-center space-x-8">
+                            <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('about')">About</a>
+                            <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('shop')">Shop</a>
+                            <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('events')">Events</a>
+                            <a class="hover:text-red-500 transition-colors cursor-pointer" onclick="goToPage('contact')">Contact</a>
+                        </div>
+                        <div class="account-container">
+                            <span class="text-sm text-gray-300 mr-2" data-username-display></span>
+                            <button class="account-icon" onclick="toggleDropdown()">
+                                <span class="material-icons">account_circle</span>
+                            </button>
+                            <div class="dropdown-menu" id="accountDropdown">
+                                <a href="#" class="dropdown-item hidden" data-profile-settings>Profile Settings</a>
+                                <a href="#" class="dropdown-item hidden" data-logout>Logout</a>
+                            </div>
+                        </div>
+                    </nav>
+                </header>
+
+                <main class="container mx-auto px-6 py-12 max-w-2xl">
+                    <h1 class="text-4xl font-bold mb-8">Profile Settings</h1>
+                    <div class="space-y-8 bg-white/5 p-6 rounded-2xl border border-red-900/30">
+                        <div>
+                            <h2 class="text-xl font-semibold mb-3">Account</h2>
+                            <div class="grid gap-3">
+                                <label class="text-sm text-gray-300">Username</label>
+                                <input id="profileUsername" type="text" class="auth-input" placeholder="Your gamer tag">
+                                <button onclick="saveUsername()" class="self-start bg-gradient-to-r from-red-900 to-red-700 text-white py-2 px-4 rounded-lg">Save Username</button>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-semibold mb-3">Change Password</h2>
+                            <div class="grid gap-3">
+                                <label class="text-sm text-gray-300">New Password</label>
+                                <input id="profilePassword" type="password" class="auth-input" placeholder="New password">
+                                <button onclick="changePassword()" class="self-start bg-gradient-to-r from-red-900 to-red-700 text-white py-2 px-4 rounded-lg">Update Password</button>
+                            </div>
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-semibold mb-3">Linked Accounts</h2>
+                            <div class="flex items-center gap-3">
+                                <button onclick="linkGoogle()" class="bg-white/10 hover:bg-white/15 text-white py-2 px-4 rounded-lg border border-white/20">Connect Google</button>
+                                <span id="linkedProviders" class="text-sm text-gray-300"></span>
+                            </div>
+                        </div>
+                        <div id="profileMessage" class="text-sm"></div>
+                    </div>
+                </main>
+            </div>
+        `;
 
         // Current page and pagination
         let currentPage = 'home';
@@ -1340,7 +1490,10 @@
                     initializeShop();
                 } else if (page === 'events') {
                     initializeEvents();
+                } else if (page === 'profile') {
+                    initializeProfilePage();
                 }
+                renderAuthState();
             }
         }
 
@@ -1610,6 +1763,126 @@
         
         // Add additional styles to head
         document.head.insertAdjacentHTML('beforeend', additionalStyles);
+
+        // ===================== AUTH LOGIC =====================
+        async function initAuth() {
+            const { data: { session } } = await supabase.auth.getSession();
+            currentUser = session?.user || null;
+            renderAuthState();
+            supabase.auth.onAuthStateChange((_event, session) => {
+                currentUser = session?.user || null;
+                renderAuthState();
+            });
+        }
+
+        function renderAuthState() {
+            const displays = document.querySelectorAll('[data-username-display]');
+            const username = currentUser?.user_metadata?.username || currentUser?.email || '';
+            displays.forEach(el => { el.textContent = currentUser ? username : ''; });
+
+            document.querySelectorAll('[data-profile-settings]').forEach(el => el.classList.toggle('hidden', !currentUser));
+            document.querySelectorAll('[data-logout]').forEach(el => el.classList.toggle('hidden', !currentUser));
+
+            const dropdown = document.getElementById('accountDropdown');
+            if (dropdown) {
+                dropdown.querySelectorAll('[data-profile-settings]')?.forEach(el => el.onclick = () => { goToPage('profile'); toggleDropdown(); });
+                dropdown.querySelectorAll('[data-logout]')?.forEach(el => el.onclick = logout);
+            }
+
+            if (document.getElementById('profileUsername')) {
+                document.getElementById('profileUsername').value = currentUser?.user_metadata?.username || '';
+                updateLinkedProviders();
+            }
+        }
+
+        // Modal controls
+        let authMode = 'login';
+        function openAuthModal(mode) { authMode = mode; setAuthModeText(); document.getElementById('authOverlay').classList.add('active'); }
+        function closeAuthModal() { document.getElementById('authOverlay').classList.remove('active'); document.getElementById('authMessage').textContent=''; }
+        function toggleAuthMode() { authMode = authMode === 'login' ? 'signup' : 'login'; setAuthModeText(); }
+        function setAuthModeText() {
+            const isSignup = authMode === 'signup';
+            document.getElementById('authTitle').textContent = isSignup ? 'Sign Up' : 'Login';
+            document.getElementById('authSubmitBtn').textContent = isSignup ? 'Sign Up' : 'Login';
+            document.getElementById('usernameField').style.display = isSignup ? 'block' : 'none';
+            document.getElementById('toggleAuthModeBtn').textContent = isSignup ? 'Already have an account? Login' : "Don't have an account? Sign up";
+        }
+
+        async function handleAuthSubmit(event) {
+            event.preventDefault();
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value;
+            const username = document.getElementById('authUsername').value.trim();
+            const messageEl = document.getElementById('authMessage');
+            messageEl.textContent = '';
+
+            if (authMode === 'signup') {
+                const { error } = await supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                        emailRedirectTo: window.location.origin,
+                        data: { username }
+                    }
+                });
+                if (error) { messageEl.textContent = error.message; messageEl.className='mt-4 text-center text-sm text-red-400'; return; }
+                messageEl.textContent = 'Check your email for confirmation.';
+                messageEl.className='mt-4 text-center text-sm text-green-400';
+            } else {
+                const { error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) { messageEl.textContent = error.message; messageEl.className='mt-4 text-center text-sm text-red-400'; return; }
+                closeAuthModal();
+            }
+        }
+
+        function oauthGoogle() {
+            supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin } });
+        }
+
+        async function logout() {
+            await supabase.auth.signOut();
+            toggleDropdown();
+        }
+
+        // Profile page helpers
+        function initializeProfilePage() {
+            if (!currentUser) { openAuthModal('login'); return; }
+            renderAuthState();
+        }
+
+        async function saveUsername() {
+            const username = document.getElementById('profileUsername').value.trim();
+            const { error, data } = await supabase.auth.updateUser({ data: { username } });
+            const msg = document.getElementById('profileMessage');
+            if (error) { msg.textContent = error.message; msg.className='text-sm text-red-400'; return; }
+            currentUser = data.user;
+            msg.textContent = 'Username updated.'; msg.className='text-sm text-green-400';
+            renderAuthState();
+        }
+
+        async function changePassword() {
+            const newPassword = document.getElementById('profilePassword').value;
+            const msg = document.getElementById('profileMessage');
+            const { error } = await supabase.auth.updateUser({ password: newPassword });
+            if (error) { msg.textContent = error.message; msg.className='text-sm text-red-400'; return; }
+            msg.textContent = 'Password updated.'; msg.className='text-sm text-green-400';
+            document.getElementById('profilePassword').value = '';
+        }
+
+        function linkGoogle() {
+            supabase.auth.linkIdentity({ provider: 'google' });
+        }
+
+        async function updateLinkedProviders() {
+            const span = document.getElementById('linkedProviders');
+            if (!span) return;
+            const { data: { user } } = await supabase.auth.getUser();
+            const providers = (user?.identities || []).map(i => i.provider).join(', ');
+            span.textContent = providers ? `Linked: ${providers}` : 'No linked providers';
+        }
+
+        // Kickoff
+        initAuth();
     </script>
 </body>
 </html>
